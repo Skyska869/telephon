@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Case — кейсы с телефонами</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #11111a;
+      --panel: #1c1a28;
+      --panel-light: #29263a;
+      --text: #f4f2ff;
+      --muted: #aaa5bc;
+      --purple: #9275ff;
+      --green: #3ac786;
+      --border: #ffffff1c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(ellipse at 10% 0%, #49347c66, transparent 38%),
+        radial-gradient(ellipse at 100% 20%, #176c8060, transparent 34%),
+        var(--bg);
+    }
+
+    button {
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      z-index: 5;
+      top: 0;
+      border-bottom: 1px solid var(--border);
+      background: #11111ae8;
+      backdrop-filter: blur(14px);
+    }
+
+    .header-inner {
+      display: flex;
+      min-height: 72px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo {
+      color: var(--text);
+      font-size: 21px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--purple);
+    }
+
+    .balance {
+      padding: 10px 15px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #ffffff0b;
+      font-weight: 700;
+    }
+
+    main {
+      padding: 32px 0 60px;
+    }
+
+    .welcome {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background:
+        linear-gradient(110deg, #342452ee, #1d3443dd),
+        var(--panel);
+      box-shadow: 0 18px 45px #0003;
+    }
+
+    .welcome::after {
+      position: absolute;
+      right: 24px;
+      bottom: -38px;
+      content: "📱";
+      font-size: 150px;
+      opacity: .16;
+      transform: rotate(-16deg);
+      pointer-events: none;
+    }
+
+    .welcome h1,
+    .welcome p,
+    .welcome button {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 5vw, 42px);
+    }
+
+    .welcome p {
+      max-width: 560px;
+      margin: 0 0 20px;
+      color: #d0cadd;
+      line-height: 1.6;
+    }
+
+    .section {
+      margin-top: 34px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .case-card,
+    .inventory-card,
+    .bonus-card {
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, #29263a, #1e1c2b);
+      box-shadow: 0 8px 24px #0002;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+
+    .case-card {
+      overflow: hidden;
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    .case-card:hover,
+    .inventory-card:hover {
+      border-color: #9b83ff88;
+      box-shadow: 0 12px 30px #0004;
+      transform: translateY(-3px);
+    }
+
+    .case-image {
+      display: grid;
+      height: 170px;
+      overflow: hidden;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 50% 40%, #9175ff55, transparent 60%),
+        #191724;
+    }
+
+    .case-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .9;
+    }
+
+    .case-image.no-image::before {
+      content: "📱";
+      font-size: 76px;
+      filter: drop-shadow(0 0 18px #a48bff88);
+    }
+
+    .case-card h3 {      margin: 16px 0 6px;
+      font-size: 20px;
+    }
+
+    .case-card p {
+      min-height: 40px;
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .case-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .case-price {
+      font-weight: 700;
+    }
+
+    .button {
+      min-height: 42px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #9a78ff, #6546e8);
+      box-shadow: 0 5px 16px #7659ff44;
+      font-weight: 700;
+      transition: transform .15s, opacity .15s;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button:active {
+      transform: scale(.97);
+    }
+
+    .button:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+      transform: none;
+    }
+
+    .button-green {
+      background: linear-gradient(135deg, #40c98a, #218653);
+      box-shadow: 0 5px 16px #21865344;
+    }
+
+    .button-secondary {
+      border: 1px solid var(--border);
+      background: #ffffff0d;
+      box-shadow: none;
+    }
+
+    .bonus-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px;
+      border-radius: 16px;
+    }
+
+    .bonus-card h3 {
+      margin: 0 0 6px;
+    }
+
+    .bonus-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .inventory-card {
+      display: flex;
+      min-width: 0;
+      min-height: 125px;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      border-radius: 16px;
+    }
+
+    .device-art {
+      position: relative;
+      display: grid;
+      width: 76px;
+      height: 96px;
+      flex: 0 0 76px;
+      overflow: hidden;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: linear-gradient(145deg, #45405e, #222031);
+    }
+
+    .device-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .device-art.no-image::before {
+      width: 38px;
+      height: 72px;
+      border: 3px solid #d8d5e8;
+      border-radius: 10px;
+      background: linear-gradient(160deg, #7562ba, #242132 65%);
+      content: "";
+      box-shadow: 0 0 20px #a48bff55;
+    }
+
+    .device-art.no-image::after {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 10px;
+      height: 4px;
+      border-radius: 5px;
+      background: #17151f;
+      content: "";
+      transform: translateX(-50%);
+    }
+
+    .phone-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .phone-info h3 {
+      overflow: hidden;
+      margin: 0 0 7px;
+      font-size: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .phone-info .case-price {
+      margin-top: 7px;
+      font-size: 13px;
+    }
+
+    .rarity {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .rarity.common {
+      color: #c2c2cd;
+    }
+
+    .rarity.rare {
+      color: #69b7ff;
+    }
+
+    .rarity.epic {
+      color: #c38bff;
+    }
+
+    .rarity.legendary {
+      color: #ffc45e;
+    }
+
+    .inventory-card button {
+      flex-shrink: 0;
+    }
+
+    .empty {
+      padding: 28px;
+      border: 1px dashed #ffffff30;
+      border-radius: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .inventory-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .overlay {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      display: none;
+      padding: 20px;
+      place-items: center;
+      background: #08070dcc;
+      backdrop-filter: blur(8px);
+    }
+
+    .overlay.visible {
+      display: grid;
+    }
+
+    .modal {
+      position: relative;
+      width: min(430px, 100%);
+      padding: 26px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(145deg, #29263a, #191722);      box-shadow: 0 24px 80px #0008;
+      text-align: center;
+      animation: appear .2s ease-out;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 10px;
+      background: #ffffff0e;
+      font-size: 22px;
+    }
+
+    .phone-photo {
+      display: grid;
+      width: 175px;
+      height: 175px;
+      margin: 8px auto 14px;
+      overflow: hidden;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 50% 35%, #9873ff66, transparent 60%),
+        #1b1927;
+      box-shadow: 0 12px 35px #0004;
+    }
+
+    .phone-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .phone-photo.no-image::before {
+      width: 76px;
+      height: 140px;
+      border: 4px solid #e0dcee;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #7964c6, #242132 65%);
+      content: "";
+      box-shadow: 0 0 35px #9276ff77;
+    }
+
+    .modal h2 {
+      margin: 8px 0;
+    }
+
+    .modal p {
+      color: var(--muted);
+    }
+
+    .modal .button {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 20;
+      right: 20px;
+      bottom: 20px;
+      max-width: calc(100% - 40px);
+      padding: 13px 17px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #29263a;
+      box-shadow: 0 8px 30px #0005;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: .2s;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    footer {
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .cases-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .inventory-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: min(100% - 22px, 1100px);
+      }
+
+      main {
+        padding-top: 20px;
+      }
+
+      .welcome {
+        padding: 22px;
+      }
+
+      .welcome::after {
+        right: 8px;
+        font-size: 110px;
+      }
+
+      .cases-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .case-image {
+        height: 150px;
+      }
+
+      .bonus-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .bonus-card .button {
+        width: 100%;
+      }
+
+      .inventory-card {
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .device-art {
+        width: 60px;
+        height: 80px;
+        flex-basis: 60px;
+      }
+
+      .inventory-card button {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container header-inner">
+      <a class="logo" href="#">PHONE<span>CASE</span></a>
+      <div class="balance">Баланс: <span id="balance">0</span> монет</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="welcome">
+      <h1>Открывай кейсы и собирай телефоны</h1>
+      <p>
+        Испытай удачу, получай виртуальные телефоны и пополняй коллекцию.
+        Продай ненужные модели, чтобы заработать монеты на новые кейсы.
+      </p>
+      <button class="button" id="scrollToCases">Выбрать кейс</button>
+    </section>
+
+    <section class="section">
+      <div class="bonus-card">
+        <div>
+          <h3>🎁 Ежедневный бонус</h3>
+          <p>Забирай 2 500 монет один раз в сутки.</p>
+        </div>
+        <button class="button button-green" id="dailyButton">
+          Забрать бонус
+        </button>
+      </div>
+    </section>
+
+    <section class="section" id="casesSection">
+      <div class="section-heading">        <h2>Кейсы</h2>
+        <span class="muted">Выбери свой кейс</span>
+      </div>
+      <div class="cases-grid" id="casesGrid"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <h2>Моя коллекция</h2>
+        <span class="muted" id="inventoryCount">Телефонов: 0</span>
+      </div>
+
+      <div class="inventory-actions">
+        <button class="button button-secondary" id="sellAllButton">
+          Продать всё
+        </button>
+      </div>
+
+      <div class="inventory-grid" id="inventoryGrid"></div>
+    </section>
+  </main>
+
+  <footer>
+    Демонстрационный сайт с виртуальными монетами. Покупки за реальные деньги недоступны.
+  </footer>
+
+  <div class="overlay" id="resultOverlay">
+    <div class="modal">
+      <button class="modal-close" id="closeModal" aria-label="Закрыть">×</button>
+      <div class="phone-photo no-image" id="phonePhoto">
+        <img id="phoneImage" alt="Изображение телефона" hidden>
+      </div>
+      <div class="muted">В кейсе найден телефон</div>
+      <h2 id="phoneName"></h2>
+      <div class="rarity" id="phoneRarity"></div>
+      <p>Стоимость продажи: <strong id="phoneValue"></strong> монет</p>
+      <button class="button" id="takePhoneButton">Забрать в коллекцию</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const PHONE_IMAGES = {
+      Apple: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=500&q=85",
+      Samsung: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=500&q=85",
+      Xiaomi: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=500&q=85",
+      POCO: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=500&q=85",
+      Honor: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=85",
+      Huawei: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=85",
+      Google: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=500&q=85",
+      OnePlus: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=85",
+      OPPO: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=500&q=85",
+      Nothing: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=500&q=85"
+    };
+
+    const CASES = [
+      {
+        id: "starter",
+        name: "Стартовый",
+        price: 800,
+        description: "Недорогой кейс для начала коллекции.",
+        featuredBrand: "Xiaomi",
+        phones: [
+          { brand: "Xiaomi", name: "Redmi 13C", rarity: "Обычный", rarityKey: "common", value: 450, weight: 45 },
+          { brand: "Samsung", name: "Galaxy A15", rarity: "Обычный", rarityKey: "common", value: 600, weight: 35 },
+          { brand: "Honor", name: "X7b", rarity: "Редкий", rarityKey: "rare", value: 1400, weight: 15 },
+          { brand: "Apple", name: "iPhone 12", rarity: "Эпический", rarityKey: "epic", value: 4500, weight: 5 }
+        ]
+      },
+      {
+        id: "pro",
+        name: "Профессиональный",
+        price: 3000,
+        description: "Больше редких моделей и шанс на хороший выигрыш.",
+        featuredBrand: "Samsung",
+        phones: [
+          { brand: "Samsung", name: "Galaxy A55", rarity: "Обычный", rarityKey: "common", value: 1900, weight: 38 },
+          { brand: "Xiaomi", name: "Redmi Note 13 Pro", rarity: "Редкий", rarityKey: "rare", value: 3400, weight: 32 },
+          { brand: "Google", name: "Pixel 8a", rarity: "Эпический", rarityKey: "epic", value: 8500, weight: 22 },
+          { brand: "Apple", name: "iPhone 14", rarity: "Легендарный", rarityKey: "legendary", value: 18000, weight: 8 }
+        ]
+      },
+      {
+        id: "premium",
+        name: "Премиум",
+        price: 7000,
+        description: "Кейс с мощными флагманами и легендарными телефонами.",
+        featuredBrand: "Apple",
+        phones: [          { brand: "OnePlus", name: "12R", rarity: "Редкий", rarityKey: "rare", value: 5500, weight: 35 },
+          { brand: "Samsung", name: "Galaxy S24", rarity: "Эпический", rarityKey: "epic", value: 11000, weight: 32 },
+          { brand: "Apple", name: "iPhone 15 Pro", rarity: "Легендарный", rarityKey: "legendary", value: 24000, weight: 23 },
+          { brand: "Nothing", name: "Phone (2)", rarity: "Эпический", rarityKey: "epic", value: 12500, weight: 10 }
+        ]
+      }
+    ];
+
+    const STORAGE_KEY = "phoneCaseGameData";
+
+    function loadData() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (saved && typeof saved.balance === "number" && Array.isArray(saved.inventory)) {
+          return saved;
+        }
+      } catch (error) {
+        console.warn("Не удалось загрузить сохранение:", error);
+      }
+
+      return {
+        balance: 10000,
+        inventory: [],
+        lastDailyBonus: 0
+      };
+    }
+
+    let data = loadData();
+    let pendingPhone = null;
+    let toastTimer = null;
+
+    const $ = (selector) => document.querySelector(selector);
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function formatMoney(amount) {
+      return new Intl.NumberFormat("ru-RU").format(amount);
+    }
+
+    function getPhoneImage(phone) {
+      return PHONE_IMAGES[phone.brand] ||
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=85";
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 2600);
+    }
+
+    function updateBalance() {
+      $("#balance").textContent = formatMoney(data.balance);
+    }
+
+    function renderCases() {
+      $("#casesGrid").innerHTML = CASES.map((item) => `
+        <article class="case-card">
+          <div class="case-image">
+            <img
+              src="${getPhoneImage({ brand: item.featuredBrand })}"
+              alt="${item.name}"
+              onerror="this.hidden=true;this.parentElement.classList.add('no-image')"
+            >
+          </div>
+          <h3>${item.name}</h3>
+          <p>${item.description}</p>
+          <div class="case-footer">
+            <span class="case-price">${formatMoney(item.price)} монет</span>
+            <button class="button" data-open-case="${item.id}">
+              Открыть
+            </button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderInventory() {
+      const grid = $("#inventoryGrid");
+      $("#inventoryCount").textContent = `Телефонов: ${data.inventory.length}`;
+      $("#sellAllButton").disabled = data.inventory.length === 0;
+
+      if (data.inventory.length === 0) {
+        grid.innerHTML = `
+          <div class="empty">
+            Коллекция пока пуста. Открой кейс, чтобы получить первый телефон!
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = data.inventory.map((item) => `
+        <article class="inventory-card">
+          <div class="device-art">
+            <img
+              src="${getPhoneImage(item)}"
+              alt="${item.brand} ${item.name}"
+              onerror="this.hidden=true;this.parentElement.classList.add('no-image')"
+            >
+          </div>
+
+          <div class="phone-info">
+            <h3>${item.brand} ${item.name}</h3>
+            <div class="rarity ${item.rarityKey}">${item.rarity}</div>
+            <div class="case-price">Цена: ${formatMoney(item.value)} монет</div>
+          </div>
+
+          <button class="button button-green" data-sell-phone="${item.id}">
+            Продать
+          </button>
+        </article>
+      `).join("");
+    }
+
+    function weightedRandom(phones) {
+      const totalWeight = phones.reduce((sum, phone) => sum + phone.weight, 0);
+      let random = Math.random() * totalWeight;
+
+      for (const phone of phones) {
+        random -= phone.weight;        if (random <= 0) return phone;
+      }
+
+      return phones[phones.length - 1];
+    }
+
+    function openCase(caseId) {
+      const selectedCase = CASES.find((item) => item.id === caseId);
+      if (!selectedCase) return;
+
+      if (data.balance < selectedCase.price) {
+        showToast("Недостаточно монет для открытия этого кейса.");
+        return;
+      }
+
+      data.balance -= selectedCase.price;
+
+      const phone = { ...weightedRandom(selectedCase.phones) };
+      phone.id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      pendingPhone = phone;
+      saveData();
+      updateBalance();
+
+      $("#phoneName").textContent = `${phone.brand} ${phone.name}`;
+
+      const rarityElement = $("#phoneRarity");
+      rarityElement.textContent = phone.rarity;
+      rarityElement.className = `rarity ${phone.rarityKey}`;
+
+      $("#phoneValue").textContent = formatMoney(phone.value);
+
+      const image = $("#phoneImage");
+      const photo = $("#phonePhoto");
+      image.hidden = false;
+      image.src = getPhoneImage(phone);
+      image.alt = `${phone.brand} ${phone.name}`;
+      photo.classList.remove("no-image");
+      image.onerror = () => {
+        image.hidden = true;
+        photo.classList.add("no-image");
+      };
+
+      $("#resultOverlay").classList.add("visible");
+    }
+
+    function closeModal() {
+      $("#resultOverlay").classList.remove("visible");
+    }
+
+    function claimDailyBonus() {
+      const now = Date.now();
+      const dayInMs = 24 * 60 * 60 * 1000;
+
+      if (now - data.lastDailyBonus < dayInMs) {
+        const remaining = dayInMs - (now - data.lastDailyBonus);
+        const hours = Math.ceil(remaining / (60 * 60 * 1000));
+        showToast(`Бонус уже получен. Попробуй снова примерно через ${hours} ч.`);
+        return;
+      }
+
+      data.balance += 2500;
+      data.lastDailyBonus = now;
+      saveData();
+      updateBalance();
+      showToast("Ежедневный бонус: +2 500 монет!");
+    }
+
+    $("#casesGrid").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-open-case]");
+      if (button) openCase(button.dataset.openCase);
+    });
+
+    $("#inventoryGrid").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-sell-phone]");
+      if (!button) return;
+
+      const index = data.inventory.findIndex((item) => item.id === button.dataset.sellPhone);
+      if (index === -1) return;
+
+      const [phone] = data.inventory.splice(index, 1);
+      data.balance += phone.value;
+
+      saveData();
+      updateBalance();
+      renderInventory();
+      showToast(`${phone.brand} ${phone.name} продан за ${formatMoney(phone.value)} монет.`);
+    });
+
+    $("#sellAllButton").addEventListener("click", () => {
+      if (data.inventory.length === 0) return;
+
+      const total = data.inventory.reduce((sum, phone) => sum + phone.value, 0);
+      data.balance += total;
+      data.inventory = [];
+
+      saveData();
+      updateBalance();
+      renderInventory();
+      showToast(`Все телефоны проданы за ${formatMoney(total)} монет.`);
+    });
+
+    $("#dailyButton").addEventListener("click", claimDailyBonus);
+
+    $("#takePhoneButton").addEventListener("click", () => {
+      if (pendingPhone) {
+        data.inventory.unshift(pendingPhone);
+        pendingPhone = null;
+        saveData();
+        renderInventory();
+      }
+
+      closeModal();
+    });
+
+    $("#closeModal").addEventListener("click", closeModal);
+
+    $("#resultOverlay").addEventListener("click", (event) => {
+      if (event.target === $("#resultOverlay")) closeModal();
+    });
+
+    $("#scrollToCases").addEventListener("click", () => {
+      $("#casesSection").scrollIntoView({ behavior: "smooth" });
+    });
+
+    renderCases();
+    renderInventory();
+    updateBalance();
+  </script>
+</body>
+</html>
